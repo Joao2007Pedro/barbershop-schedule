@@ -60,32 +60,52 @@ Este sistema permite que **clientes agendem horários**, **barbeiros gerenciem s
 ## **🛢️ 4. Estrutura do Banco de Dados (MySQL)**
 
 ```sql
+CREATE DATABASE barbershop;
+USE barbershop;
+
+-- Tabela de Usuários (Clientes e Barbeiros)
 CREATE TABLE users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role ENUM('cliente', 'barbeiro', 'admin') NOT NULL
+    role ENUM('cliente', 'barbeiro', 'admin') NOT NULL DEFAULT 'cliente',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tabela de Barbeiros
+CREATE TABLE barbers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNIQUE NOT NULL,
+    bio TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Tabela de Serviços
 CREATE TABLE services (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    description TEXT,
     price DECIMAL(10,2) NOT NULL,
-    duration INT NOT NULL
+    duration INT NOT NULL COMMENT 'Duração em minutos',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tabela de Agendamentos
 CREATE TABLE appointments (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    client_id INT NOT NULL,
     barber_id INT NOT NULL,
     service_id INT NOT NULL,
-    date DATETIME NOT NULL,
-    status ENUM('pendente', 'confirmado', 'cancelado') NOT NULL DEFAULT 'pendente',
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (barber_id) REFERENCES users(id),
-    FOREIGN KEY (service_id) REFERENCES services(id)
+    appointment_date DATETIME NOT NULL,
+    status ENUM('pendente', 'confirmado', 'cancelado') DEFAULT 'pendente',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (barber_id) REFERENCES barbers(id) ON DELETE CASCADE,
+    FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
 );
+
 ```
 
 ---
