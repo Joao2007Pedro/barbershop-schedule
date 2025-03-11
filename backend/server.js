@@ -1,8 +1,14 @@
-require("dotenv").config();
-const app = require("./app");
+const app = require('./app');
+require('./src/config/syncDatabase'); // Importa e executa a sincronização do banco de dados
 
-const port = app.get("port");
+const startServer = async () => {
+  try {
+    app.listen(app.get('port'), () => {
+      console.log(`Server running on port ${app.get('port')}`);
+    });
+  } catch (error) {
+    console.error('Unable to start the server:', error);
+  }
+};
 
-app.listen(port, () => {
-  console.log(`Server running on port http://localhost:${port}`);
-});
+startServer();

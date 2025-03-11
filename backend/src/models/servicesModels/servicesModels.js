@@ -1,4 +1,4 @@
-const connection = require('../config/db');
+const connection = require('../../config/db');
 
 const createService = async (service) => {
     const { name, description, price, duration, createdAt } = service;
