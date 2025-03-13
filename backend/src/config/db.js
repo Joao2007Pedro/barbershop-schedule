@@ -9,12 +9,5 @@ const connection = mysql.createPool({
   database: process.env.DB_NAME,
 });
 
-connection.getConnection()
-  .then(() => {
-    console.log("Connected to MySQL");
-  })
-  .catch((err) => {
-    console.error("Error connecting to MySQL:", err);
-  });
 
 module.exports = connection;
