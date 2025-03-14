@@ -4,6 +4,10 @@ import { useState } from "react";
 
 import "./Login.css";
 
+import { Link } from "react-router-dom";
+
+
+
 const Login = () => {
     const [username, setUsername] = useState(""); 
     const [password, setPassword] = useState("");
@@ -47,8 +51,7 @@ const Login = () => {
 
             <div className="signup-link">
                 <p>
-                Não tem uma conta? <a href="#">Registrar</a>
-                </p>
+                Não tem uma conta? <Link to="/Register">Cadastre-se</Link></p>
             </div>
         </form>
       </div>
