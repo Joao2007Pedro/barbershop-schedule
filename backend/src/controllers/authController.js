@@ -1,4 +1,5 @@
 const User = require("../models/userModels/user");
+const Barber = require("../models/barberModel/barber"); // Certifique-se de importar o modelo Barber
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -68,7 +69,6 @@ const getMe = async (req, res) => {
     res.status(500).json({ message: "Erro ao buscar usuário!", error });
   }
 };
-
 
 module.exports = { 
     register,
