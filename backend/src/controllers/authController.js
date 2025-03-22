@@ -1,26 +1,39 @@
 const User = require("../models/userModels/user");
-const Barber = require("../models/barberModel/barber"); // Certifique-se de importar o modelo Barber
+const Barber = require("../models/barberModel/barber"); 
+const BarberModel = require("../models/barberModel/barberModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, bio } = req.body;
 
+    // Verifica se o e-mail já está cadastrado
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ message: "E-mail já cadastrado!" });
     }
 
+    // Criptografa a senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Cria o usuário
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
       role,
     });
+
+    // Se o usuário for barbeiro, adiciona na tabela barbers
+    if (role === "barbeiro") {
+      await Barber.create({
+        user_id: user.id, // Relaciona com o ID do usuário criado
+        bio: bio || "Barbeiro sem descrição", // Bio opcional
+        created_at: new Date(),
+      });
+    }
 
     res.status(201).json({ message: "Usuário cadastrado com sucesso!", user });
   } catch (error) {

@@ -1,5 +1,12 @@
  const db = require('../../config/db');
 
+const createBarber = async (name, email, password, role) => {
+    const query = 'INSERT INTO barbers (, email, password, role) VALUES (?, ?, ?, ?)';
+    const [barber] = await db.execute(query, [name, email, password, role]);
+    return barber;
+};
+
+
 const getAllBarbers = async (req, res) => {
     const query = 'SELECT * FROM barbers';
     try {
@@ -12,5 +19,6 @@ const getAllBarbers = async (req, res) => {
 
 module.exports = {
     getAllBarbers, 
+    createBarber,
 
 };
