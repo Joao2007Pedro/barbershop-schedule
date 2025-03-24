@@ -1,7 +1,6 @@
-const User = require("../models/userModels/user");
-const Barber = require("../models/barberModel/barber"); 
-const BarberModel = require("../models/barberModel/barberModel");
-const bcrypt = require("bcryptjs");
+const User = require("../models/user");
+const Barber = require("../models/barber"); 
+const bcrypt = require("bcryptjs"); // Apenas uma declaração de bcrypt
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -22,15 +21,15 @@ const register = async (req, res) => {
     const user = await User.create({
       name,
       email,
-      password: hashedPassword,
+      password: hashedPassword, // Armazena a senha encriptada
       role,
     });
 
     // Se o usuário for barbeiro, adiciona na tabela barbers
     if (role === "barbeiro") {
       await Barber.create({
-        user_id: user.id, // Relaciona com o ID do usuário criado
-        bio: bio || "Barbeiro sem descrição", // Bio opcional
+        user_id: user.id,
+        bio: bio || "Barbeiro sem descrição",
         created_at: new Date(),
       });
     }
@@ -50,6 +49,7 @@ const login = async (req, res) => {
       return res.status(404).json({ message: "Usuário não encontrado!" });
     }
 
+    // Compara a senha fornecida com a senha encriptada no banco
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(401).json({ message: "Senha inválida!" });

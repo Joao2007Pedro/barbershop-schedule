@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../../config/sequelize'); // Ajuste para o caminho correto do seu arquivo de configuração do Sequelize
+const sequelize = require('../config/sequelize'); // Ajuste para o caminho correto do seu arquivo de configuração do Sequelize
 
 const Barber = sequelize.define('barbers', {
   user_id: {
@@ -20,7 +20,7 @@ const Barber = sequelize.define('barbers', {
     defaultValue: DataTypes.NOW,
   },
 }, {
-  timestamps: false, // Desativa os campos createdAt e updatedAt
+  timestamps: false, 
 });
 
 module.exports = Barber;

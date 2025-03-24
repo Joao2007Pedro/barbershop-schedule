@@ -1,4 +1,4 @@
-const userModel = require('../models/userModels/user'); // Importe o modelo de usuário
+const userModel = require('../models/user'); // Importe o modelo de usuário
 
 const verificaAdm = async (req, res, next) => {
     const user = req.body.user; 
