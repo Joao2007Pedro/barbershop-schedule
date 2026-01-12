@@ -1,12 +1,16 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 async function request(path, { method = 'GET', body, headers } = {}) {
+  const token = localStorage.getItem('token');
+  const finalHeaders = {
+    'Content-Type': 'application/json',
+    ...(headers || {}),
+  };
+  if (token) finalHeaders.Authorization = `Bearer ${token}`;
+
   const res = await fetch(`${API_URL}${path}`, {
     method,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(headers || {}),
-    },
+    headers: finalHeaders,
     body: body ? JSON.stringify(body) : undefined,
   });
 

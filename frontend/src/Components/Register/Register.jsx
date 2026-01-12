@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import './Register.css';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { api } from "../../services/api";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,17 +22,27 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('As senhas não coincidem.');
+      if (formData.password !== formData.confirmPassword) {
+        setError('As senhas não coincidem.');
       return;
-    }
+      }
 
-    setError('');
-    alert('Cadastro realizado com sucesso!');
-  };
+      try {
+        await api.post('/api/auth/register', {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: 'cliente', // TODO: permitir escolha do papel
+        });
+        alert('Cadastro realizado com sucesso!');
+        navigate('/');
+      } catch (err) {
+        setError('Erro ao cadastrar. Verifique os dados.');
+      }
+    };
 
   return (
     <div className="container">
