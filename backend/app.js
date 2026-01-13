@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(indexRoutes); // Usando o arquivo centralizado de rotas
 
 sequelize.sync({ force: false }).then(() => {
-  console.log("Database & tables created!");
+  console.log("Database & tabelas criadas!");
 });
 
 app.set("port", config.port);
