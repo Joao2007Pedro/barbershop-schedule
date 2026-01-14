@@ -1,11 +1,14 @@
+// Serviço para gerenciar a lógica de negócios relacionada a agendamentos
 const User = require('../models/user');
 const Barber = require('../models/barber');
 const Service = require('../models/service');
 const AppointmentRepository = require('../repositories/appointmentRepository');
 const { ValidationError, NotFoundError } = require('../utils/errorHandler');
 
+// Status permitidos para um agendamento
 const allowedStatus = ['pendente', 'confirmado', 'cancelado'];
 
+// Função para enriquecer os dados do agendamento com informações relacionadas
 const enrichAppointment = async (appointment) => {
   if (!appointment) return null;
   const user = await User.findByPk(appointment.user_id);
@@ -17,6 +20,7 @@ const enrichAppointment = async (appointment) => {
   return appointment;
 };
 
+// Função para obter todos os agendamentos
 const getAllAppointments = async () => {
   const appointments = await AppointmentRepository.findAll();
   // Enriquecer em paralelo para melhor desempenho
@@ -24,12 +28,14 @@ const getAllAppointments = async () => {
   return enriched;
 };
 
+// Função para obter um agendamento por ID
 const getAppointmentById = async (id) => {
   const appointment = await AppointmentRepository.findById(id);
   if (!appointment) throw new NotFoundError('Appointment not found');
   return enrichAppointment(appointment);
 };
 
+// Função para criar um novo agendamento
 const createAppointment = async (payload) => {
   const { user_id, barber_id, service_id, appointment_date, status } = payload;
 
@@ -63,6 +69,7 @@ const createAppointment = async (payload) => {
   return appointment;
 };
 
+// Função para atualizar o status de um agendamento
 const updateAppointmentStatus = async (id, status) => {
   if (!status) throw new ValidationError("O campo 'status' é obrigatório.");
   if (!allowedStatus.includes(status)) throw new ValidationError('Status inválido.');
@@ -72,6 +79,7 @@ const updateAppointmentStatus = async (id, status) => {
   return enrichAppointment(updated);
 };
 
+// Função para remover um agendamento
 const deleteAppointment = async (id) => {
   const ok = await AppointmentRepository.remove(id);
   if (!ok) throw new NotFoundError('Appointment not found');

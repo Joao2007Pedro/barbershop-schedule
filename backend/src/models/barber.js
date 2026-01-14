@@ -1,3 +1,4 @@
+// Estrutura de dados para a classe Barber usando Sequelize
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 

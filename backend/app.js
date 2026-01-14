@@ -3,6 +3,8 @@ const cors = require("cors");
 const config = require("./src/config/config");
 const indexRoutes = require("./src/routes/indexRoutes"); // Importando o arquivo centralizado de rotas
 const sequelize = require("./src/config/sequelize");
+// Carregar modelos e associações antes de sync
+require("./src/models/index");
 const app = express();
 
 app.use(cors());

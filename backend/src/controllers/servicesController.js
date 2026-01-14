@@ -1,68 +1,52 @@
-const Service = require('../models/service');
+const serviceService = require('../services/serviceService');
+const { success, created, noContent } = require('../utils/responseHandler');
+const { handleErrorResponse } = require('../utils/errorHandler');
 
 const createService = async (req, res) => {
-    const { name, description, price, duration, createdAt } = req.body;
     try {
-        const service = await Service.create({ name, description, price, duration, createdAt });
-        res.status(201).json({ id: service.id });
-    } catch (error) {
-        console.error('Error creating service:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        const service = await serviceService.createService(req.body);
+        return created(res, service);
+    } catch (err) {
+        return handleErrorResponse(res, err);
     }
 };
 
 const getAllServices = async (req, res) => {
     try {
-        const services = await Service.findAll();
-        res.status(200).json(services);
-    } catch (error) {
-        console.error('Error getting services:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        const services = await serviceService.getAllServices();
+        return success(res, services);
+    } catch (err) {
+        return handleErrorResponse(res, err);
     }
 };
 
 const getServiceById = async (req, res) => {
     const { id } = req.params;
     try {
-        const service = await Service.findByPk(id);
-        if (!service) {
-            return res.status(404).json({ error: 'Service not found' });
-        }
-        res.status(200).json(service);
-    } catch (error) {
-        console.error('Error getting service:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        const service = await serviceService.getServiceById(id);
+        return success(res, service);
+    } catch (err) {
+        return handleErrorResponse(res, err);
     }
 };
 
 const updateService = async (req, res) => {
-    const { name, description, price, duration } = req.body;
     const { id } = req.params;
     try {
-        const service = await Service.findByPk(id);
-        if (!service) {
-            return res.status(404).json({ error: 'Service not found' });
-        }
-        await service.update({ name, description, price, duration });
-        res.status(200).json({menssage: 'Service updated'});
-    } catch (error) {
-        console.error('Error updating service:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        const service = await serviceService.updateService(id, req.body);
+        return success(res, { menssage: 'Service updated', service });
+    } catch (err) {
+        return handleErrorResponse(res, err);
     }
 };
 
 const deleteService = async (req, res) => {
     const { id } = req.params;
     try {
-        const service = await Service.findByPk(id);
-        if (!service) {
-            return res.status(404).json({ error: 'Service not found' });
-        }
-        await service.destroy();
-        res.status(204).json({menssage: 'Service deleted'});
-    } catch (error) {
-        console.error('Error deleting service:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        await serviceService.deleteService(id);
+        return noContent(res);
+    } catch (err) {
+        return handleErrorResponse(res, err);
     }
 };
 

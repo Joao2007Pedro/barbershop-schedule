@@ -1,3 +1,4 @@
+// Estrutura de dados para a classe Service usando Sequelize
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize');
 

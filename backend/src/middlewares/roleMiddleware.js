@@ -1,26 +1,25 @@
-const userModel = require('../models/user'); // Importe o modelo de usuário
+const User = require('../models/user');
 
 const verificaAdm = async (req, res, next) => {
-    const user = req.body.user; 
+    // Requer uso prévio de authMiddleware para popular req.user
+    const tokenUser = req.user;
 
-    if (!user) {
-        return res.status(400).json({ message: 'Usuário não fornecido.' });
+    if (!tokenUser) {
+        return res.status(401).json({ message: 'Acesso negado! Usuário não autenticado.' });
     }
 
     try {
-        const userExists = await userModel.getUserById(user.id); 
-
+        const userExists = await User.findByPk(tokenUser.id);
         if (!userExists) {
             return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
 
-        if (user.role === 'admin') {
-            next(); 
-        } else {
-            res.status(403).json({ message: 'Acesso negado. Apenas administradores podem acessar esta rota.' });
+        if (tokenUser.role === 'admin') {
+            return next();
         }
+        return res.status(403).json({ message: 'Acesso negado. Apenas administradores podem acessar esta rota.' });
     } catch (error) {
-        res.status(500).json({ message: 'Erro interno do servidor.' });
+        return res.status(500).json({ message: 'Erro interno do servidor.' });
     }
 };
 
