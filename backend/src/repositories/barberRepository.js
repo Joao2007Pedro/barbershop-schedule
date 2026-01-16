@@ -1,7 +1,7 @@
 // Repositório para gerenciar operações de banco de dados relacionadas a Barber
 
-// Importando o modelo Barber para operações de banco de dados
-const Barber = require('../models/barber');
+// Importando modelos para operações de banco de dados
+const { Barber, User } = require('../models');
 
 // Função para buscar todos os barbeiros
 const findAll = async () => {
@@ -38,6 +38,15 @@ const remove = async (id) => {
 // Exporta as funções do repositório
 module.exports = {
   findAll,
+  findAndCount: async ({ where = {}, limit = 10, offset = 0, order = [['created_at', 'DESC']] } = {}) => {
+    return Barber.findAndCountAll({
+      where,
+      limit,
+      offset,
+      order,
+      include: [{ model: User }],
+    });
+  },
   findById,
   create,
   update,

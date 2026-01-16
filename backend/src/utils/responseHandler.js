@@ -7,8 +7,8 @@ const created = (res, data) => {
 };
 
 const noContent = (res) => {
-	// Convencionalmente 204 não deve ter body, mas manter mensagem opcional
-	return res.status(204).json({ message: 'No Content' });
+	// 204 No Content não deve retornar body
+	return res.status(204).end();
 };
 
 const failure = (res, message, status = 400) => {

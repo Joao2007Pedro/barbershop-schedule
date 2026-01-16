@@ -20,12 +20,39 @@ const enrichAppointment = async (appointment) => {
   return appointment;
 };
 
-// Função para obter todos os agendamentos
-const getAllAppointments = async () => {
-  const appointments = await AppointmentRepository.findAll();
-  // Enriquecer em paralelo para melhor desempenho
-  const enriched = await Promise.all(appointments.map(enrichAppointment));
-  return enriched;
+// Função para obter agendamentos com filtros e paginação
+const getAllAppointments = async (query = {}) => {
+  const page = Number(query.page) > 0 ? Number(query.page) : 1;
+  const pageSize = Number(query.pageSize) > 0 ? Number(query.pageSize) : 10;
+  const offset = (page - 1) * pageSize;
+
+  const where = {};
+  if (query.status) where.status = query.status;
+  if (query.user_id) where.user_id = Number(query.user_id);
+  if (query.barber_id) where.barber_id = Number(query.barber_id);
+  if (query.service_id) where.service_id = Number(query.service_id);
+
+  // Filtro por intervalo de datas
+  if (query.from || query.to) {
+    where.appointment_date = {};
+    if (query.from) where.appointment_date['$gte'] = new Date(query.from);
+    if (query.to) where.appointment_date['$lte'] = new Date(query.to);
+  }
+
+  const { rows, count } = await AppointmentRepository.findAndCount({
+    where,
+    limit: pageSize,
+    offset,
+    order: [['appointment_date', 'ASC']],
+  });
+
+  return {
+    items: rows,
+    page,
+    pageSize,
+    total: count,
+    totalPages: Math.ceil(count / pageSize),
+  };
 };
 
 // Função para obter um agendamento por ID

@@ -1,8 +1,39 @@
 const ServiceRepository = require('../repositories/serviceRepository');
 const { ValidationError, NotFoundError } = require('../utils/errorHandler');
+const { Op } = require('sequelize');
 
-const getAllServices = async () => {
-	return ServiceRepository.findAll();
+const getAllServices = async (query = {}) => {
+	const page = Number(query.page) > 0 ? Number(query.page) : 1;
+	const pageSize = Number(query.pageSize) > 0 ? Number(query.pageSize) : 10;
+	const offset = (page - 1) * pageSize;
+
+	const where = {};
+	if (query.name) where.name = { [Op.like]: `%${query.name}%` };
+	if (query.minPrice || query.maxPrice) {
+		where.price = {};
+		if (query.minPrice) where.price[Op.gte] = Number(query.minPrice);
+		if (query.maxPrice) where.price[Op.lte] = Number(query.maxPrice);
+	}
+	if (query.minDuration || query.maxDuration) {
+		where.duration = {};
+		if (query.minDuration) where.duration[Op.gte] = Number(query.minDuration);
+		if (query.maxDuration) where.duration[Op.lte] = Number(query.maxDuration);
+	}
+
+	const { rows, count } = await ServiceRepository.findAndCount({
+		where,
+		limit: pageSize,
+		offset,
+		order: [['created_at', 'DESC']],
+	});
+
+	return {
+		items: rows,
+		page,
+		pageSize,
+		total: count,
+		totalPages: Math.ceil(count / pageSize),
+	};
 };
 
 const getServiceById = async (id) => {

@@ -1,7 +1,7 @@
 // Repositório para gerenciar operações de banco de dados relacionadas a Service
 
 // Importando o modelo Service para operações de banco de dados
-const Service = require('../models/service');
+const { Service } = require('../models');
 
 // Função para buscar todos os serviços
 const findAll = async () => {
@@ -36,6 +36,9 @@ const remove = async (id) => {
 // Exporta as funções do repositório
 module.exports = {
  findAll,
+ findAndCount: async ({ where = {}, limit = 10, offset = 0, order = [['created_at', 'DESC']] } = {}) => {
+   return Service.findAndCountAll({ where, limit, offset, order });
+ },
  findById,
  create,
  update,

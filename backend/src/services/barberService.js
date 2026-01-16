@@ -1,6 +1,7 @@
 const BarberRepository = require('../repositories/barberRepository');
 const User = require('../models/user');
 const { ValidationError, NotFoundError } = require('../utils/errorHandler');
+const { Op } = require('sequelize');
 
 const enrichBarber = async (barber) => {
 	if (!barber) return null;
@@ -9,10 +10,29 @@ const enrichBarber = async (barber) => {
 	return barber;
 };
 
-const getAllBarbers = async () => {
-	const barbers = await BarberRepository.findAll();
-	const enriched = await Promise.all(barbers.map(enrichBarber));
-	return enriched;
+const getAllBarbers = async (query = {}) => {
+	const page = Number(query.page) > 0 ? Number(query.page) : 1;
+	const pageSize = Number(query.pageSize) > 0 ? Number(query.pageSize) : 10;
+	const offset = (page - 1) * pageSize;
+
+	const where = {};
+	if (query.user_id) where.user_id = Number(query.user_id);
+	if (query.bio) where.bio = { [Op.like]: `%${query.bio}%` };
+
+	const { rows, count } = await BarberRepository.findAndCount({
+		where,
+		limit: pageSize,
+		offset,
+		order: [['created_at', 'DESC']],
+	});
+
+	return {
+		items: rows,
+		page,
+		pageSize,
+		total: count,
+		totalPages: Math.ceil(count / pageSize),
+	};
 };
 
 const getBarberById = async (id) => {

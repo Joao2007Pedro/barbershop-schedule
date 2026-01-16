@@ -1,11 +1,26 @@
 // Repositório para gerenciar operações de banco de dados relacionadas a Appointment
 
-// Importando o modelo Appointment para operações de banco de dados
-const Appointment = require('../models/appointment');
+// Importando modelos e associações
+const { Appointment, User, Barber, Service } = require('../models');
 
 // Função para buscar todos os agendamentos
 const findAll = async () => {
   return Appointment.findAll();
+};
+
+// Busca com filtros, paginação e include de relacionamentos
+const findAndCount = async ({ where = {}, limit = 10, offset = 0, order = [['appointment_date', 'ASC']] } = {}) => {
+  return Appointment.findAndCountAll({
+    where,
+    limit,
+    offset,
+    order,
+    include: [
+      { model: User },
+      { model: Barber },
+      { model: Service },
+    ],
+  });
 };
 
 // Função para buscar um agendamento por ID
@@ -38,6 +53,7 @@ const remove = async (id) => {
 // Exporta as funções do repositório
 module.exports = {
   findAll,
+  findAndCount,
   findById,
   create,
   updateStatus,

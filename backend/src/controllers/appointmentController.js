@@ -4,8 +4,8 @@ const { handleErrorResponse } = require('../utils/errorHandler');
 
 const getAllAppointments = async (req, res) => {
     try {
-        const appointments = await appointmentService.getAllAppointments();
-        return success(res, appointments);
+        const result = await appointmentService.getAllAppointments(req.query);
+        return success(res, result);
     } catch (err) {
         return handleErrorResponse(res, err);
     }

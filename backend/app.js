@@ -11,6 +11,10 @@ app.use(cors());
 app.use(express.json());
 app.use(indexRoutes); // Usando o arquivo centralizado de rotas
 
+// Middleware global de erros (deve vir após as rotas)
+const errorMiddleware = require('./src/middlewares/errorMiddleware');
+app.use(errorMiddleware);
+
 sequelize.sync({ force: false }).then(() => {
   console.log("Database & tabelas criadas!");
 });

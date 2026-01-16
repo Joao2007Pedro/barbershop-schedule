@@ -4,7 +4,7 @@ const { handleErrorResponse } = require('../utils/errorHandler');
 
 const getAllBarbers = async (req, res) => {
     try {
-        const barbers = await barberService.getAllBarbers();
+        const barbers = await barberService.getAllBarbers(req.query);
         return success(res, barbers);
     } catch (err) {
         return handleErrorResponse(res, err);
