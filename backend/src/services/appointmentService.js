@@ -4,6 +4,7 @@ const Barber = require('../models/barber');
 const Service = require('../models/service');
 const AppointmentRepository = require('../repositories/appointmentRepository');
 const { ValidationError, NotFoundError } = require('../utils/errorHandler');
+const { Op } = require('sequelize');
 
 // Status permitidos para um agendamento
 const allowedStatus = ['pendente', 'confirmado', 'cancelado'];
@@ -32,18 +33,23 @@ const getAllAppointments = async (query = {}) => {
   if (query.barber_id) where.barber_id = Number(query.barber_id);
   if (query.service_id) where.service_id = Number(query.service_id);
 
-  // Filtro por intervalo de datas
+  // Filtro por intervalo de datas com Sequelize Op
   if (query.from || query.to) {
     where.appointment_date = {};
-    if (query.from) where.appointment_date['$gte'] = new Date(query.from);
-    if (query.to) where.appointment_date['$lte'] = new Date(query.to);
+    if (query.from) where.appointment_date[Op.gte] = new Date(query.from);
+    if (query.to) where.appointment_date[Op.lte] = new Date(query.to);
   }
+
+  // Ordenação dinâmica com whitelist
+  const allowedSortFields = ['appointment_date', 'status', 'created_at'];
+  const sortBy = allowedSortFields.includes(String(query.sortBy)) ? String(query.sortBy) : 'appointment_date';
+  const sortDir = String(query.sortDir).toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
 
   const { rows, count } = await AppointmentRepository.findAndCount({
     where,
     limit: pageSize,
     offset,
-    order: [['appointment_date', 'ASC']],
+    order: [[sortBy, sortDir]],
   });
 
   return {

@@ -19,11 +19,16 @@ const getAllBarbers = async (query = {}) => {
 	if (query.user_id) where.user_id = Number(query.user_id);
 	if (query.bio) where.bio = { [Op.like]: `%${query.bio}%` };
 
+	// Ordenação dinâmica com whitelist
+	const allowedSortFields = ['created_at', 'bio', 'user_id'];
+	const sortBy = allowedSortFields.includes(String(query.sortBy)) ? String(query.sortBy) : 'created_at';
+	const sortDir = String(query.sortDir).toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+
 	const { rows, count } = await BarberRepository.findAndCount({
 		where,
 		limit: pageSize,
 		offset,
-		order: [['created_at', 'DESC']],
+		order: [[sortBy, sortDir]],
 	});
 
 	return {

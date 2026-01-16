@@ -20,11 +20,16 @@ const getAllServices = async (query = {}) => {
 		if (query.maxDuration) where.duration[Op.lte] = Number(query.maxDuration);
 	}
 
+	// Ordenação dinâmica com whitelist
+	const allowedSortFields = ['name', 'price', 'duration', 'created_at'];
+	const sortBy = allowedSortFields.includes(String(query.sortBy)) ? String(query.sortBy) : 'created_at';
+	const sortDir = String(query.sortDir).toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+
 	const { rows, count } = await ServiceRepository.findAndCount({
 		where,
 		limit: pageSize,
 		offset,
-		order: [['created_at', 'DESC']],
+		order: [[sortBy, sortDir]],
 	});
 
 	return {
