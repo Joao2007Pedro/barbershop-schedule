@@ -2,6 +2,7 @@ const appointmentService = require('../services/appointmentService');
 const { success, created, noContent } = require('../utils/responseHandler');
 const { handleErrorResponse } = require('../utils/errorHandler');
 
+// Função para gerenciar agendamentos
 const getAllAppointments = async (req, res) => {
     try {
         const result = await appointmentService.getAllAppointments(req.query);
@@ -11,6 +12,7 @@ const getAllAppointments = async (req, res) => {
     }
 };
 
+// Função para obter um agendamento por ID
 const getAppointmentById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -21,6 +23,7 @@ const getAppointmentById = async (req, res) => {
     }
 };
 
+// Função para criar um novo agendamento
 const createAppointment = async (req, res) => {
   try {
     const appointment = await appointmentService.createAppointment(req.body);
@@ -30,17 +33,19 @@ const createAppointment = async (req, res) => {
   }
 };
 
+// Função para atualizar o status de um agendamento
 const updateAppointmentStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
     try {
         const appointment = await appointmentService.updateAppointmentStatus(id, status);
-        return success(res, { message: 'Appointment status updated successfully', appointment });
+        return success(res, { message: 'Status do agendamento atualizado com sucesso', appointment });
     } catch (err) {
         return handleErrorResponse(res, err);
     }
 };
 
+// Função para remover um agendamento
 const deleteAppointment = async (req, res) => {
     const { id } = req.params;
     try {
@@ -51,6 +56,7 @@ const deleteAppointment = async (req, res) => {
     }
 };
 
+// Exporta as funções do controlador de agendamento
 module.exports = {
     getAllAppointments,
     getAppointmentById,

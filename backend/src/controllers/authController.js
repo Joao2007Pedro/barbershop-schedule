@@ -1,9 +1,10 @@
 const User = require("../models/user");
 const Barber = require("../models/barber"); 
-const bcrypt = require("bcryptjs"); // Apenas uma declaração de bcrypt
+const bcrypt = require("bcryptjs"); // Biblioteca para hash de senhas 
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
+require("dotenv").config(); // Carrega variáveis de ambiente
 
+// Função para registrar um novo usuário
 const register = async (req, res) => {
   try {
     const { name, email, password, role, bio } = req.body;
@@ -40,6 +41,7 @@ const register = async (req, res) => {
   }
 };
 
+// Função para login de usuário
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -54,7 +56,7 @@ const login = async (req, res) => {
     if (!validPassword) {
       return res.status(401).json({ message: "Senha inválida!" });
     }
-
+    // Gera um token JWT
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
@@ -67,6 +69,7 @@ const login = async (req, res) => {
   }
 };
 
+// Função para obter os dados do usuário autenticado
 const getMe = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
@@ -83,6 +86,7 @@ const getMe = async (req, res) => {
   }
 };
 
+// Exporta as funções do controlador de autenticação
 module.exports = { 
     register,
     login,

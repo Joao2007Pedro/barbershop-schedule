@@ -1,7 +1,7 @@
 const { ValidationError } = require('../utils/errorHandler');
-
 const isEmpty = (v) => v === undefined || v === null || String(v).trim() === '';
 
+// Função para a validação do payload para criação e atualização de serviços
 const validateCreate = (req, res, next) => {
   const { name, description, price, duration } = req.body;
   try {
@@ -19,6 +19,7 @@ const validateCreate = (req, res, next) => {
   }
 };
 
+// Função para a validação do payload para atualização de serviços
 const validateUpdate = (req, res, next) => {
   const { name, description, price, duration } = req.body;
   try {

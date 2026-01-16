@@ -2,6 +2,7 @@ const barberService = require('../services/barberService');
 const { success, created, noContent } = require('../utils/responseHandler');
 const { handleErrorResponse } = require('../utils/errorHandler');
 
+// Função para gerenciar barbers
 const getAllBarbers = async (req, res) => {
     try {
         const barbers = await barberService.getAllBarbers(req.query);
@@ -11,6 +12,7 @@ const getAllBarbers = async (req, res) => {
     }
 };
 
+// Função para obter um barber por ID
 const getBarberById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -21,6 +23,7 @@ const getBarberById = async (req, res) => {
     }
 };
 
+// Função para criar um novo barber
 const createBarber = async (req, res) => {
   try {
     const barber = await barberService.createBarber(req.body);
@@ -30,6 +33,7 @@ const createBarber = async (req, res) => {
   }
 };
 
+// Função para atualizar um barber existente
 const updateBarber = async (req, res) => {
     const { id } = req.params;
     try {
@@ -40,6 +44,7 @@ const updateBarber = async (req, res) => {
     }
 };
 
+// Função para remover um barber
 const deleteBarber = async (req, res) => {
     const { id } = req.params;
     try {
@@ -50,6 +55,7 @@ const deleteBarber = async (req, res) => {
     }
 };
 
+// Exporta as funções do controlador de Barbeiro
 module.exports = {
     getAllBarbers,
     getBarberById,
